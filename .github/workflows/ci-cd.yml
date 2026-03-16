@@ -193,9 +193,9 @@ jobs:
         run: |
           conda activate mlops_2026
           bash ./src/run_sh/train.sh | tee train.log
-          RUN_ID=$(grep -oE 'runs/[a-f0-9]+' train.log | head -n1 | cut -d/ -f2)
+          RUN_ID=$(grep -oE 'Run ID: [a-f0-9]+' train.log | head -n1 | awk '{print $3}')
           echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-          echo "MODEL_URI=runs:${RUN_ID}/xgboost_churn" >> $GITHUB_ENV
+          echo "MODEL_URI=runs:/${RUN_ID}/logistic_regression_churn" >> $GITHUB_ENV
 
       - name: Debug RUN_ID
         run: echo "The RUN_ID is ${{ env.RUN_ID }}"
