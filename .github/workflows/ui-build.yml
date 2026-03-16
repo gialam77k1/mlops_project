@@ -17,6 +17,10 @@ on:
       - 'serving_pipeline/sample_retrieval.py'
       - '.github/workflows/ui-build.yml'
 
+concurrency:
+  group: self-hosted-runner
+  cancel-in-progress: true
+
 env:
   REGISTRY: ghcr.io
   REF_REPO: thuannan/aio2025-mlops-project01
