@@ -34,7 +34,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 PYTHON_SCRIPT="$PROJECT_ROOT/src/scripts/eval.py"
 CONFIG_PATH="$PROJECT_ROOT/src/config/logistic_regression.yaml"
-EVAL_DATASET="/home/mlops/Repository/aio2025-mlops-project01/data-pipeline/churn_feature_store/churn_features/feature_repo/data/test.parquet"
+EVAL_DATASET="$PROJECT_ROOT/../data-pipeline/churn_feature_store/churn_features/feature_repo/data/test.parquet"
 PREDICTION_FOLDER="$PROJECT_ROOT/prediction_folder/prediction11.csv"
 
 # =====================

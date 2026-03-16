@@ -30,7 +30,7 @@ echo "PROJECT_ROOT: $PROJECT_ROOT"
 # =====================
 PYTHON_SCRIPT="$PROJECT_ROOT/src/scripts/train.py"
 CONFIG_PATH="$PROJECT_ROOT/src/config/logistic_regression.yaml"
-TRAINING_DATA_PATH="/home/mlops/Repository/aio2025-mlops-project01/data-pipeline/churn_feature_store/churn_features/feature_repo/data/processed_churn_data.parquet"
+TRAINING_DATA_PATH="$PROJECT_ROOT/../data-pipeline/churn_feature_store/churn_features/feature_repo/data/processed_churn_data.parquet"
 
 TIMESTAMP="$(date +"%Y%m%d_%H%M%S")"
 RUN_NAME="baseline-logistic_regression_${TIMESTAMP}"
