@@ -48,9 +48,17 @@ def prepare_data_for_feast(input_path, output_path="data/processed_churn_data.pa
     # Rename columns
     df = df.rename(columns=column_mapping)
     
-    # Add any missing engineered features
     if 'avg_monthly_spend' not in df.columns:
         df['avg_monthly_spend'] = df['total_spend'] / np.maximum(df['tenure_months'], 1)
+        
+    if 'tenure_age_ratio' not in df.columns:
+        df['tenure_age_ratio'] = df['tenure_months'] / np.maximum(df['age'], 1)
+        
+    if 'spend_per_usage' not in df.columns:
+        df['spend_per_usage'] = df['total_spend'] / np.maximum(df['usage_frequency'], 1)
+        
+    if 'support_calls_per_tenure' not in df.columns:
+        df['support_calls_per_tenure'] = df['support_calls'] / np.maximum(df['tenure_months'], 1)
     
     if 'churn_risk_score' not in df.columns:
         # Simple risk score calculation
@@ -95,6 +103,12 @@ def prepare_data_for_feast(input_path, output_path="data/processed_churn_data.pa
     return df_feast
 
 if __name__ == "__main__":
-    # Update this path to your processed data
-    input_file = "../../../data/processed/df_processed.csv"
-    prepare_data_for_feast(input_file)
+    import sys
+    if len(sys.argv) > 2:
+        input_file = sys.argv[1]
+        output_file = sys.argv[2]
+        prepare_data_for_feast(input_file, output_file)
+    else:
+        # Update this path to your processed data
+        input_file = "../../../data/processed/df_processed.csv"
+        prepare_data_for_feast(input_file)

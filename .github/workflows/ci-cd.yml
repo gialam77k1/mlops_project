@@ -48,16 +48,25 @@ jobs:
           pip install -r requirements.txt
           pip install "feast[redis]" dvc-s3 pandas pyarrow numpy
           dvc pull || echo "Warning: DVC pull failed. Data files may be missing."
-          # Generate dummy data if dvc pull failed
+          # Use real CSV data if present, otherwise generate dummy data
           python -c "
           import pandas as pd
           import numpy as np
           from datetime import datetime
           import os
+          import subprocess
           
           path = 'churn_feature_store/churn_features/feature_repo/data/processed_churn_data.parquet'
           test_path = 'churn_feature_store/churn_features/feature_repo/data/test.parquet'
-          if not os.path.exists(path):
+          train_csv = 'data/raw/customer_churn_dataset-training-master.csv'
+          test_csv = 'data/raw/customer_churn_dataset-testing-master.csv'
+          script = 'churn_feature_store/churn_features/feature_repo/prepare_feast_data.py'
+          
+          if os.path.exists(train_csv) and os.path.exists(test_csv):
+              print('Found real raw CSV datasets! Processing them via prepare_feast_data.py...')
+              subprocess.run(['python', script, train_csv, path], check=True)
+              subprocess.run(['python', script, test_csv, test_path], check=True)
+          elif not os.path.exists(path):
               print('Generating dummy data to pass the CI/CD pipeline...')
               os.makedirs(os.path.dirname(path), exist_ok=True)
               df = pd.DataFrame({
