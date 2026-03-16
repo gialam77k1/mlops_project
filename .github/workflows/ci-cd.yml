@@ -35,7 +35,11 @@ jobs:
       - name: Test activate conda environment
         shell: bash -l {0}
         run: |
+          conda create -y -n churn_mlops python=3.9
           conda activate churn_mlops
+          cd data-pipeline
+          pip install -r requirements.txt
+          pip install feast
 
       - name: Apply Feast Feature Definitions
         shell: bash -l {0}
@@ -69,7 +73,10 @@ jobs:
       - name: Test activate conda environment
         shell: bash -l {0}
         run: |
+          conda create -y -n mlops_2026 python=3.9
           conda activate mlops_2026
+          cd model_pipeline
+          pip install -r requirements.txt
 
       - name: Run Training
         shell: bash -l {0}
