@@ -39,7 +39,7 @@ jobs:
           conda activate churn_mlops
           cd data-pipeline
           pip install -r requirements.txt
-          pip install feast
+          pip install "feast[redis]"
 
       - name: Apply Feast Feature Definitions
         shell: bash -l {0}
