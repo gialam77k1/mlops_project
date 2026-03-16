@@ -25,7 +25,7 @@ env:
   REGISTRY: ghcr.io
   REF_REPO: thuannan/aio2025-mlops-project01
   DOCKER_BUILDKIT: 1
-  SERVING_REPO_PATH: /home/mlops/Repository/aio2025-mlops-project01/serving_pipeline
+  SERVING_REPO_PATH: serving_pipeline
   API_BASE_URL: http://api.mlopsvn.space
 
 jobs:

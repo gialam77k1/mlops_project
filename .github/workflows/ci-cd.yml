@@ -26,23 +26,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-activate-base: true
+          python-version: 3.9
+
       - name: Test activate conda environment
-        shell: bash
+        shell: bash -l {0}
         run: |
-          source /home/mlops/miniconda3/bin/activate
           conda activate churn_mlops
 
       - name: Apply Feast Feature Definitions
-        shell: bash
+        shell: bash -l {0}
         working-directory: ${{ env.FEAST_REPO_PATH }}
         run: |
-          conda run -n churn_mlops feast apply
+          conda activate churn_mlops
+          feast apply
 
       - name: Materialize Feast Features
-        shell: bash
+        shell: bash -l {0}
         working-directory: ${{ env.FEAST_REPO_PATH }}
         run: |
-          conda run -n churn_mlops feast materialize-incremental $(date -u +"%Y-%m-%dT%H:%M:%S")
+          conda activate churn_mlops
+          feast materialize-incremental $(date -u +"%Y-%m-%dT%H:%M:%S")
 
 
   training:
@@ -53,17 +60,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-activate-base: true
+          python-version: 3.9
+
       - name: Test activate conda environment
-        shell: bash 
+        shell: bash -l {0}
         run: |
-          source /home/mlops/miniconda3/bin/activate
           conda activate mlops_2026
 
       - name: Run Training
-        shell: bash
+        shell: bash -l {0}
         working-directory: ${{ env.TRAINING_REPO_PATH }}
         run: |
-          conda run -n mlops_2026 bash ./src/run_sh/train.sh | tee train.log
+          conda activate mlops_2026
+          bash ./src/run_sh/train.sh | tee train.log
           RUN_ID=$(grep -oE 'runs/[a-f0-9]+' train.log | head -n1 | cut -d/ -f2)
           echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
           echo "MODEL_URI=runs:${RUN_ID}/xgboost_churn" >> $GITHUB_ENV
@@ -72,28 +85,32 @@ jobs:
         run: echo "The RUN_ID is ${{ env.RUN_ID }}"
 
       - name: Run Evaluation
-        shell: bash
+        shell: bash -l {0}
         working-directory: ${{ env.TRAINING_REPO_PATH }}
         run: |
-          conda run -n mlops_2026 bash ./src/run_sh/eval.sh --run-id ${{ env.RUN_ID }} | tee eval.log
+          conda activate mlops_2026
+          bash ./src/run_sh/eval.sh --run-id ${{ env.RUN_ID }} | tee eval.log
 
       - name: Run Registration
-        shell: bash
+        shell: bash -l {0}
         working-directory: ${{ env.TRAINING_REPO_PATH }}
         run: |
-          conda run -n mlops_2026 bash ./src/run_sh/register.sh --run-id ${{ env.RUN_ID }} | tee register.log
+          conda activate mlops_2026
+          bash ./src/run_sh/register.sh --run-id ${{ env.RUN_ID }} | tee register.log
 
       - name: Update Model Version Alias
-        shell: bash
+        shell: bash -l {0}
         working-directory: ${{ env.TRAINING_REPO_PATH }}
         run: |
-          conda run -n mlops_2026 bash ./src/run_sh/set_model_alias.sh
+          conda activate mlops_2026
+          bash ./src/run_sh/set_model_alias.sh
 
       - name: Promote to Champion
-        shell: bash
+        shell: bash -l {0}
         working-directory: ${{ env.TRAINING_REPO_PATH }}
         run: |
-          conda run -n mlops_2026 bash ./src/run_sh/promote.sh
+          conda activate mlops_2026
+          bash ./src/run_sh/promote.sh
 
   serving: 
     runs-on: ubuntu-latest
