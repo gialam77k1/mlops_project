@@ -38,26 +38,29 @@ jobs:
     - name: List all built images
       run: docker images | grep mlops
 
-    # Uncomment below sections when you have container registry credentials
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
     
-    # - name: Login to Docker Registry
-    #   uses: docker/login-action@v2
-    #   with:
-    #     registry: ${{ secrets.REGISTRY_URL }}
-    #     username: ${{ secrets.REGISTRY_USERNAME }}
-    #     password: ${{ secrets.REGISTRY_PASSWORD }}
+    - name: Tag and Push serving pipeline image
+      run: |
+        docker tag mlops-serving:${{ github.sha }} ${{ secrets.DOCKER_HUB_USERNAME }}/mlops-serving:latest
+        docker tag mlops-serving:${{ github.sha }} ${{ secrets.DOCKER_HUB_USERNAME }}/mlops-serving:${{ github.sha }}
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/mlops-serving:latest
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/mlops-serving:${{ github.sha }}
     
-    # - name: Push serving pipeline image
-    #   run: |
-    #     docker push ${{ secrets.REGISTRY_URL }}/mlops-serving:latest
-    #     docker push ${{ secrets.REGISTRY_URL }}/mlops-serving:${{ github.sha }}
+    - name: Tag and Push UI image
+      run: |
+        docker tag mlops-ui:${{ github.sha }} ${{ secrets.DOCKER_HUB_USERNAME }}/mlops-ui:latest
+        docker tag mlops-ui:${{ github.sha }} ${{ secrets.DOCKER_HUB_USERNAME }}/mlops-ui:${{ github.sha }}
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/mlops-ui:latest
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/mlops-ui:${{ github.sha }}
     
-    # - name: Push UI image
-    #   run: |
-    #     docker push ${{ secrets.REGISTRY_URL }}/mlops-ui:latest
-    #     docker push ${{ secrets.REGISTRY_URL }}/mlops-ui:${{ github.sha }}
-    
-    # - name: Push Airflow image
-    #   run: |
-    #     docker push ${{ secrets.REGISTRY_URL }}/mlops-airflow:latest
-    #     docker push ${{ secrets.REGISTRY_URL }}/mlops-airflow:${{ github.sha }}
+    - name: Tag and Push Airflow image
+      run: |
+        docker tag mlops-airflow:${{ github.sha }} ${{ secrets.DOCKER_HUB_USERNAME }}/mlops-airflow:latest
+        docker tag mlops-airflow:${{ github.sha }} ${{ secrets.DOCKER_HUB_USERNAME }}/mlops-airflow:${{ github.sha }}
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/mlops-airflow:latest
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/mlops-airflow:${{ github.sha }}
