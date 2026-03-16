@@ -30,7 +30,7 @@ env:
 
 jobs:
   ui:
-    runs-on: [self-hosted, linux]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code

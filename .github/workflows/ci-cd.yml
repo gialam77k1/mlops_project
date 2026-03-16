@@ -13,13 +13,13 @@ env:
   REGISTRY: ghcr.io
   REF_REPO: thuannan/aio2025-mlops-project01
   DOCKER_BUILDKIT: 1
-  FEAST_REPO_PATH: /home/mlops/Repository/aio2025-mlops-project01/data-pipeline/churn_feature_store/churn_features/feature_repo
-  TRAINING_REPO_PATH: /home/mlops/Repository/aio2025-mlops-project01/model_pipeline
-  SERVING_REPO_PATH: /home/mlops/Repository/aio2025-mlops-project01/serving_pipeline
+  FEAST_REPO_PATH: data-pipeline/churn_feature_store/churn_features/feature_repo
+  TRAINING_REPO_PATH: model_pipeline
+  SERVING_REPO_PATH: serving_pipeline
 
 jobs:
   feast:
-    runs-on: [self-hosted, linux]
+    runs-on: ubuntu-latest
     timeout-minutes: 30
 
     steps:
@@ -46,7 +46,7 @@ jobs:
 
 
   training:
-    runs-on: [self-hosted, linux]
+    runs-on: ubuntu-latest
     needs: feast
     timeout-minutes: 60
     steps:
@@ -96,7 +96,7 @@ jobs:
           conda run -n mlops_2026 bash ./src/run_sh/promote.sh
 
   serving: 
-    runs-on: [self-hosted, linux]
+    runs-on: ubuntu-latest
     needs: training
     timeout-minutes: 45
 
