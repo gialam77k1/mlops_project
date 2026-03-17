@@ -213,20 +213,22 @@ jobs:
         run: |
           conda activate mlops_2026
           bash ./src/run_sh/register.sh --run-id ${{ env.RUN_ID }} 2>&1 | tee register.log
+          MODEL_VERSION=$(grep "Model registered:" register.log | tail -n1 | awk '{print $NF}' | tr -d 'v')
+          echo "MODEL_VERSION=$MODEL_VERSION" >> $GITHUB_ENV
 
       - name: Update Model Version Alias
         shell: bash -l {0}
         working-directory: ${{ env.TRAINING_REPO_PATH }}
         run: |
           conda activate mlops_2026
-          bash ./src/run_sh/set_model_alias.sh
+          bash ./src/run_sh/set_model_alias.sh --version ${{ env.MODEL_VERSION }}
 
       - name: Promote to Champion
         shell: bash -l {0}
         working-directory: ${{ env.TRAINING_REPO_PATH }}
         run: |
           conda activate mlops_2026
-          bash ./src/run_sh/promote.sh
+          bash ./src/run_sh/promote.sh --version ${{ env.MODEL_VERSION }}
 
   serving: 
     runs-on: ubuntu-latest
