@@ -277,6 +277,29 @@ jobs:
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.REF_REPO }}:buildcache
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.REF_REPO }}:buildcache,mode=max
 
+      - name: Extract metadata (tags, labels) for UI Docker
+        id: meta_ui
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.REF_REPO }}-ui
+          tags: |
+            # Tag for main branch
+            type=raw,value=main,enable=${{ github.ref == 'refs/heads/main' }}
+            # Tag with commit SHA
+            type=sha,prefix={{branch}}-
+
+      - name: Build and push UI Docker image
+        id: push_ui
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ env.SERVING_REPO_PATH }}
+          file: ${{ env.SERVING_REPO_PATH }}/Dockerfile.ui
+          push: true
+          platforms: linux/amd64
+          tags: ${{ steps.meta_ui.outputs.tags }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.REF_REPO }}-ui:buildcache
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.REF_REPO }}-ui:buildcache,mode=max
+
       - name: Start API Service
         shell: bash
         working-directory: ${{ env.SERVING_REPO_PATH }}
