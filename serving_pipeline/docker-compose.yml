@@ -1,6 +1,9 @@
 services:
   api:
     image: ${REGISTRY:-ghcr.io}/${REF_REPO:-thuannan/aio2025-mlops-project01}:main
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: churn-prediction-api
     ports:
       - "8000:8000"
@@ -26,6 +29,9 @@ services:
 
   ui:
     image: ${REGISTRY:-ghcr.io}/${REF_REPO:-thuannan/aio2025-mlops-project01}-ui:main
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
     container_name: churn-prediction-ui
     restart: unless-stopped
     ports:
