@@ -213,7 +213,7 @@ jobs:
         run: |
           conda activate mlops_2026
           bash ./src/run_sh/register.sh --run-id ${{ env.RUN_ID }} 2>&1 | tee register.log
-          MODEL_VERSION=$(grep "Model registered:" register.log | tail -n1 | awk '{print $NF}' | tr -dc '0-9')
+          MODEL_VERSION=$(grep -oP "Model registered:.* v\K\d+" register.log | tail -n1)
           echo "MODEL_VERSION=$MODEL_VERSION" >> $GITHUB_ENV
 
       - name: Update Model Version Alias
