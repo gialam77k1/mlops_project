@@ -280,6 +280,15 @@ jobs:
       - name: Start API Service
         shell: bash
         working-directory: ${{ env.SERVING_REPO_PATH }}
+        env:
+          MODEL_URI: "models:/logistic_regression_churn@champion"
+          MLFLOW_TRACKING_URI: "http://localhost:5000"
+          MLFLOW_S3_ENDPOINT_URL: "http://localhost:9000"
+          AWS_ACCESS_KEY_ID: "minio"
+          AWS_SECRET_ACCESS_KEY: "minio123"
+          AWS_DEFAULT_REGION: "us-east-1"
+          API_BASE_URL: "http://localhost:8000"
         run: |
+          docker network create aio-network || true
           docker compose up -d --force-recreate
         
