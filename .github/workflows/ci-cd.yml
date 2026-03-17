@@ -192,7 +192,7 @@ jobs:
         working-directory: ${{ env.TRAINING_REPO_PATH }}
         run: |
           conda activate mlops_2026
-          bash ./src/run_sh/train.sh | tee train.log
+          bash ./src/run_sh/train.sh 2>&1 | tee train.log
           RUN_ID=$(grep -oE 'Run ID: [a-f0-9]+' train.log | head -n1 | awk '{print $3}')
           echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
           echo "MODEL_URI=runs:/${RUN_ID}/logistic_regression_churn" >> $GITHUB_ENV
@@ -205,14 +205,14 @@ jobs:
         working-directory: ${{ env.TRAINING_REPO_PATH }}
         run: |
           conda activate mlops_2026
-          bash ./src/run_sh/eval.sh --run-id ${{ env.RUN_ID }} | tee eval.log
+          bash ./src/run_sh/eval.sh --run-id ${{ env.RUN_ID }} 2>&1 | tee eval.log
 
       - name: Run Registration
         shell: bash -l {0}
         working-directory: ${{ env.TRAINING_REPO_PATH }}
         run: |
           conda activate mlops_2026
-          bash ./src/run_sh/register.sh --run-id ${{ env.RUN_ID }} | tee register.log
+          bash ./src/run_sh/register.sh --run-id ${{ env.RUN_ID }} 2>&1 | tee register.log
 
       - name: Update Model Version Alias
         shell: bash -l {0}
